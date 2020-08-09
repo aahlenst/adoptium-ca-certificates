@@ -11,8 +11,8 @@ HOST_USER_UID=$(stat -c "%u" /home/builder/workspace)
 HOST_USER_GID=$(stat -c "%g" /home/builder/workspace)
 
 # Get UID/GID of user inside the container.
-CONTAINER_USER_UID=$(id -u)
-CONTAINER_USER_GID=$(id -g)
+CONTAINER_USER_UID=$(id -u builder)
+CONTAINER_USER_GID=$(id -g builder)
 
 # If they do not match, change the user inside the container.
 if [ -n "$HOST_USER_UID" ] && [ "$HOST_USER_UID" != "$CONTAINER_USER_UID" ]; then
