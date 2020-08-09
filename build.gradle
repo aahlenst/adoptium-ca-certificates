@@ -24,7 +24,7 @@ version "1.0.0-SNAPSHOT"
  *
  * If a version like sid is missing here, the package won't be included in the sid repository and therefore not
  * installable via apt. Never use suite names like testing or unstable. This list is usually bigger than the list
- * of versions we test with as defined by the class DebianFlavours in the source set funcTest.
+ * of versions we test with as defined by the class DebianFlavours in the source set packageTest.
  *
  * **Attention**: If you alter the list, check if the class DebianFlavours needs to be updated, too.
  */
@@ -36,22 +36,22 @@ java {
 }
 
 sourceSets {
-	funcTest {
+	packageTest {
 		compileClasspath += sourceSets.main.output
 		runtimeClasspath += sourceSets.main.output
 	}
 }
 
 configurations {
-	funcTestImplementation.extendsFrom implementation
-	funcTestRuntimeOnly.extendsFrom runtimeOnly
+	packageTestImplementation.extendsFrom implementation
+	packageTestRuntimeOnly.extendsFrom runtimeOnly
 }
 
 dependencies {
-	funcTestImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
-	funcTestImplementation "org.testcontainers:testcontainers:$testcontainersVersion"
-	funcTestImplementation "org.testcontainers:junit-jupiter:$testcontainersVersion"
-	funcTestImplementation "org.assertj:assertj-core:$assertjCoreVersion"
+	packageTestImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+	packageTestImplementation "org.testcontainers:testcontainers:$testcontainersVersion"
+	packageTestImplementation "org.testcontainers:junit-jupiter:$testcontainersVersion"
+	packageTestImplementation "org.assertj:assertj-core:$assertjCoreVersion"
 }
 
 test {
@@ -66,7 +66,7 @@ checkstyle {
 }
 
 task deb {
-	dependsOn "build"
+	dependsOn "assemble"
 
 	group = "packaging"
 	description = "Creates deb package for Debian flavours."
@@ -107,17 +107,19 @@ tasks.register("package") {
 	description = "Creates Linux packages."
 }
 
-task functionalTest(type: Test) {
+task packageTest(type: Test) {
 	dependsOn "package"
 
-	description = 'Runs functional tests on the generated packages.'
+	description = 'Tests the generated packages.'
 	group = 'verification'
 
-	testClassesDirs = sourceSets.funcTest.output.classesDirs
-	classpath = sourceSets.funcTest.runtimeClasspath
+	testClassesDirs = sourceSets.packageTest.output.classesDirs
+	classpath = sourceSets.packageTest.runtimeClasspath
 
 	useJUnitPlatform()
 	testLogging {
 		events "passed", "skipped", "failed"
 	}
 }
+
+check.dependsOn(packageTest)

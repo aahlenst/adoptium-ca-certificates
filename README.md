@@ -24,4 +24,4 @@ We do not publish the packages separately for Linux Mint or Raspbian because the
 
 The Debian/Ubuntu versions this package **is built for and uploaded to** is controlled by the variable `deb_versions` in the project's `build.gradle` file. 
 
-The Debian/Ubuntu versions this package **is tested with** is controlled by the class `DebianFlavours` in the source set `funcTest`.
+The Debian/Ubuntu versions this package **is tested with** is controlled by the class `DebianFlavours` in the source set `packageTest`.

@@ -45,7 +45,7 @@ steps:
       jdkArchitectureOption: "x64"
       publishJUnitResults: true
       testResultsFiles: "**/TEST-*.xml"
-      tasks: "check functionalTest"
+      tasks: "check packageTest"
 
   - task: CopyFiles@2
     displayName: "Collect debian packages"
