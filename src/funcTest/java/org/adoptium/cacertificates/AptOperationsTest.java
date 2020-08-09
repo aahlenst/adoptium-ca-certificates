@@ -69,6 +69,27 @@ class AptOperationsTest {
 
 	@ParameterizedTest(name = "{0}:{1}")
 	@ArgumentsSource(DebianFlavours.class)
+	void packageContentsMatchExpectations(String distribution, String codename) {
+		Path hostDeb = DebFiles.hostDebPath();
+		assertThat(hostDeb).exists();
+		File containerDeb = new File("", hostDeb.toFile().getName());
+		String packageContents = IOUtil.resourceAsString("/deb-contents.txt");
+
+		try (GenericContainer container = new GenericContainer(String.format("%s:%s", distribution, codename))) {
+			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
+				.withCopyFileToContainer(MountableFile.forHostPath(hostDeb), containerDeb.toString())
+				.start();
+
+			Container.ExecResult result;
+
+			result = runShell(container, "dpkg --contents " + containerDeb);
+			assertThat(result.getExitCode()).isEqualTo(0);
+			assertThat(result.getStdout().replaceAll("\n\n", "\n")).isEqualTo(packageContents);
+		}
+	}
+
+	@ParameterizedTest(name = "{0}:{1}")
+	@ArgumentsSource(DebianFlavours.class)
 	void uninstallRemovesPackage(String distribution, String codename) {
 		Path hostDeb = DebFiles.hostDebPath();
 		assertThat(hostDeb).exists();
