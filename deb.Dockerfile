@@ -1,8 +1,8 @@
 FROM debian:buster
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential debhelper sudo \
-        lsb-release reprepro gosu
+# Combine apt-get update with apt-get install to prevent stale package indexes.
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential \
+        debhelper sudo lsb-release reprepro gosu
 
 # Create unprivileged user for building
 RUN useradd -m -d /home/builder builder
